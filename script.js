@@ -7,24 +7,38 @@ class Modal {
         this.closeBtn = closeBtn;
         this.isShowing = false;
         this.openers = [];
-        this.overlay.addEventListener('click', () => {this.show(false)});
-        this.closeBtn.addEventListener('click', () => {this.show(false)});
+        this.overlay.addEventListener('click', this.show);
+        this.closeBtn.addEventListener('click', this.show);
     }
 
-    show(show) {
-        if (this.isShowing !== show) {
-            const action = show ? "remove" : "add";
-            this.overlay.classList[action]('hidden');
-            this.modal.classList[action]('hidden');
-            this.isShowing = show;
-        }
+    show = () => {
+        const action = this.isShowing ? "add" : "remove";
+        const actionEvent = !this.isShowing ? "add" : "remove";
+        this.overlay.classList[action]('hidden');
+        this.modal.classList[action]('hidden');
+        document[`${actionEvent}EventListener`]('keydown', this.escCloser);
+        this.isShowing = !this.isShowing;
     }
 
-    addOpener(button) {
+    addOpener = (button) => {
         if (this.openers.includes(button)) {
             return false;
         }
-        button.addEventListener('click', () => {this.show(true)});
+        button.addEventListener('click', this.show);
+    }
+
+    escCloser = (evt) => {
+        console.log('teste');
+        evt = evt || window.event;
+        var isEscape = false;
+        if ("key" in evt) {
+            isEscape = (evt.key === "Escape" || evt.key === "Esc");
+        } else {
+            isEscape = (evt.keyCode === 27);
+        }
+        if (isEscape) {
+            this.show();
+        }
     }
 }
 
